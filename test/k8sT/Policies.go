@@ -25,6 +25,7 @@ import (
 	"github.com/cilium/cilium/pkg/annotation"
 	"github.com/cilium/cilium/pkg/policy"
 	"github.com/cilium/cilium/pkg/uuid"
+	"github.com/cilium/cilium/test/config"
 	. "github.com/cilium/cilium/test/ginkgo-ext"
 	"github.com/cilium/cilium/test/helpers"
 
@@ -78,6 +79,8 @@ var _ = Describe("K8sPolicyTest", func() {
 
 	BeforeAll(func() {
 		kubectl = helpers.CreateKubectl(helpers.K8s1VMName(), logger)
+		err := kubectl.AddRegistryCredentials(config.CiliumTestConfig.RegistryCredentials, config.RegistryDomain)
+		Expect(err).To(BeNil(), "Could not create registry credenitals")
 
 		demoPath = helpers.ManifestGet(kubectl.BasePath(), "demo-named-port.yaml")
 		l3Policy = helpers.ManifestGet(kubectl.BasePath(), "l3-l4-policy.yaml")

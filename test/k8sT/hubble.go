@@ -25,6 +25,7 @@ import (
 	"github.com/asaskevich/govalidator"
 	"github.com/cilium/cilium/pkg/annotation"
 	"github.com/cilium/cilium/pkg/hubble/defaults"
+	"github.com/cilium/cilium/test/config"
 	. "github.com/cilium/cilium/test/ginkgo-ext"
 	"github.com/cilium/cilium/test/helpers"
 
@@ -108,6 +109,8 @@ var _ = Describe("K8sHubbleTest", func() {
 
 	BeforeAll(func() {
 		kubectl = helpers.CreateKubectl(helpers.K8s1VMName(), logger)
+		err := kubectl.AddRegistryCredentials(config.CiliumTestConfig.RegistryCredentials, config.RegistryDomain)
+		Expect(err).To(BeNil(), "Could not create registry credenitals")
 		k8s1NodeName, _ = kubectl.GetNodeInfo(helpers.K8s1)
 
 		demoPath = helpers.ManifestGet(kubectl.BasePath(), "demo.yaml")

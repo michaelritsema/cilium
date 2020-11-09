@@ -41,6 +41,8 @@ var _ = Describe("K8sDatapathConfig", func() {
 
 	BeforeAll(func() {
 		kubectl = helpers.CreateKubectl(helpers.K8s1VMName(), logger)
+		err := kubectl.AddRegistryCredentials(config.CiliumTestConfig.RegistryCredentials, config.RegistryDomain)
+		Expect(err).To(BeNil(), "Could not create registry credenitals")
 		deploymentManager.SetKubectl(kubectl)
 	})
 

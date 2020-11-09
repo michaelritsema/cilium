@@ -22,6 +22,7 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/cilium/cilium/test/config"
 	. "github.com/cilium/cilium/test/ginkgo-ext"
 	"github.com/cilium/cilium/test/helpers"
 	external_ips "github.com/cilium/cilium/test/k8sT/manifests/externalIPs"
@@ -102,6 +103,8 @@ var _ = skipSuite("K8sKubeProxyFreeMatrix tests", func() {
 			return
 		}
 		kubectl = helpers.CreateKubectl(helpers.K8s1VMName(), logger)
+		err := kubectl.AddRegistryCredentials(config.CiliumTestConfig.RegistryCredentials, config.RegistryDomain)
+		Expect(err).To(BeNil(), "Could not create registry credenitals")
 
 		ciliumFilename = helpers.TimestampFilename("cilium.yaml")
 		DeployCiliumAndDNS(kubectl, ciliumFilename)

@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/cilium/cilium/api/v1/models"
+	"github.com/cilium/cilium/test/config"
 	. "github.com/cilium/cilium/test/ginkgo-ext"
 	"github.com/cilium/cilium/test/helpers"
 	"github.com/cilium/cilium/test/helpers/policygen"
@@ -49,6 +50,8 @@ var _ = Describe("NightlyEpsMeasurement", func() {
 
 	BeforeAll(func() {
 		kubectl = helpers.CreateKubectl(helpers.K8s1VMName(), logger)
+		err := kubectl.AddRegistryCredentials(config.CiliumTestConfig.RegistryCredentials, config.RegistryDomain)
+		Expect(err).To(BeNil(), "Could not create registry credenitals")
 		vagrantManifestPath = path.Join(kubectl.BasePath(), manifestPath)
 
 		ciliumFilename = helpers.TimestampFilename("cilium.yaml")
@@ -336,6 +339,8 @@ var _ = Describe("NightlyExamples", func() {
 
 	BeforeAll(func() {
 		kubectl = helpers.CreateKubectl(helpers.K8s1VMName(), logger)
+		err := kubectl.AddRegistryCredentials(config.CiliumTestConfig.RegistryCredentials, config.RegistryDomain)
+		Expect(err).To(BeNil(), "Could not create registry credenitals")
 
 		demoPath = helpers.ManifestGet(kubectl.BasePath(), "demo.yaml")
 		l3Policy = helpers.ManifestGet(kubectl.BasePath(), "l3-l4-policy.yaml")
@@ -376,6 +381,8 @@ var _ = Describe("NightlyExamples", func() {
 
 		BeforeAll(func() {
 			kubectl = helpers.CreateKubectl(helpers.K8s1VMName(), logger)
+			err := kubectl.AddRegistryCredentials(config.CiliumTestConfig.RegistryCredentials, config.RegistryDomain)
+			Expect(err).To(BeNil(), "Could not create registry credenitals")
 
 			demoPath = helpers.ManifestGet(kubectl.BasePath(), "demo.yaml")
 			l7Policy = helpers.ManifestGet(kubectl.BasePath(), "l7-policy.yaml")

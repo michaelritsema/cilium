@@ -25,6 +25,7 @@ import (
 	"time"
 
 	"github.com/cilium/cilium/pkg/versioncheck"
+	"github.com/cilium/cilium/test/config"
 	. "github.com/cilium/cilium/test/ginkgo-ext"
 	"github.com/cilium/cilium/test/helpers"
 
@@ -81,6 +82,8 @@ var _ = Describe("K8sServicesTest", func() {
 
 	BeforeAll(func() {
 		kubectl = helpers.CreateKubectl(helpers.K8s1VMName(), logger)
+		err := kubectl.AddRegistryCredentials(config.CiliumTestConfig.RegistryCredentials, config.RegistryDomain)
+		Expect(err).To(BeNil(), "Could not create registry credenitals")
 
 		k8s1NodeName, k8s1IP = kubectl.GetNodeInfo(helpers.K8s1)
 		k8s2NodeName, k8s2IP = kubectl.GetNodeInfo(helpers.K8s2)

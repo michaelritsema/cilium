@@ -17,6 +17,7 @@ package helpers
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -399,6 +400,29 @@ func (kub *Kubectl) DaemonSetIsReady(namespace, daemonset string) (int, error) {
 	}
 
 	return int(d.Status.DesiredNumberScheduled), nil
+}
+
+// AddRegistryCredentials adds a registry credentials secret into the
+// cluster
+func (kub *Kubectl) AddRegistryCredentials(cred string, registry string) error {
+	if len(cred) == 0 {
+		return nil
+	}
+	buf, err := base64.StdEncoding.DecodeString(cred)
+	if err != nil {
+		return err
+	}
+	up := strings.SplitN(string(buf), ":", 2)
+	if len(up) != 2 {
+		return fmt.Errorf("registry credentials had an invalid format")
+	}
+
+	cmd := fmt.Sprintf("%s secret docker-registry regcred --docker-server=%s --docker-username=%s --docker-password=%s", KubectlCmd, registry, up[0], up[1])
+	res := kub.ExecShort(cmd)
+	if !res.WasSuccessful() {
+		return fmt.Errorf("unable to create docker registry credentials")
+	}
+	return nil
 }
 
 // WaitForCiliumReadiness waits for the Cilium DaemonSet to become ready.

@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"path/filepath"
 
+	"github.com/cilium/cilium/test/config"
 	. "github.com/cilium/cilium/test/ginkgo-ext"
 	"github.com/cilium/cilium/test/helpers"
 
@@ -39,6 +40,8 @@ var _ = Describe("K8sDemosTest", func() {
 
 	BeforeAll(func() {
 		kubectl = helpers.CreateKubectl(helpers.K8s1VMName(), logger)
+		err := kubectl.AddRegistryCredentials(config.CiliumTestConfig.RegistryCredentials, config.RegistryDomain)
+		Expect(err).To(BeNil(), "Could not create registry credenitals")
 		starWarsDemoDir := helpers.ManifestGet(kubectl.BasePath(), "star-wars-demo")
 		deathStarYAMLLink = filepath.Join(starWarsDemoDir, "01-deathstar.yaml")
 		xwingYAMLLink = filepath.Join(starWarsDemoDir, "02-xwing.yaml")
